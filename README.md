@@ -576,6 +576,43 @@ Now we gotta mess with permissions and users
 
 ### Certbot and https
 
+Since we will be using passwords and transferring secure information our next step must
+be to add http over tls support to our jenkins (CI) server. For this there are multiple ways
+including buying a expensive certificate, another way is to use a free lets encrypt
+certificate. The benefit of buying a certificate is that they provide higher validation
+levels are generally more trusted and provide warrantys. The biggest benefit is probably
+that they are renewed less, free certificates are alright and generally way more secure then
+not having one, although, since they are provided free they need to be renewed every three months. 
+
+We will use a free tool created by lets encrypt in order to obtain there certificates called certbot.
+
+1. install certbot with `sudo yum install certbot-nginx`
+2. obtain a certificate by typing `sudo certbot --nginx -d jenkins.yourdomain`
+3. type your email address used for renewal and security purposes (for me it's 'admin@effectfree.dev')
+4. Read through the options and select which ones you want (I just put yes for everything)
+5. Once this is complete you can test your configuration with the [SSL Labs Server Test](https://www.ssllabs.com/ssltest/)
+6. Now setting up auto renewal requires cron.
+
+#### A Quick Note on cron
+
+In linux system administration we often want to automate tasks needed to be performed every day, or every
+few days. As such there are multiple ways to do this. One of them is cronjobs. Cron is a service that will
+run a service or a script or something after a set period of time. Another alternative is to use systemd,
+systemd has multiple file types, some common ones are timers which run at a set period in the day, sockets
+which listen and activate software when needed, and services which run through the duration from startup to
+shutdown. Creating cron jobs is easy, we can use the crontab command to quickly create cronjobs.
+
+`sudo crontab -e`
+
+add this line
+
+```cron
+...
+0 3 * * * /usr/bin/certbot renew --quiet
+```
+
+this command makes cron run certbot renew at 3am every day.
+
 ### Ansible
 
 ## Part 2: Deploy a static website with nginx, http2 and https with ansible+jenkins
