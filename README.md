@@ -624,7 +624,48 @@ add this line
 
 this command makes cron run certbot renew at 3am every day.
 
-### Ansible
+### Final Jenkins Setup
+
+1. Navigate to your website in your web browser now that you have set up http over tls (e.g. https://jenkins.howgood.me)
+
+2. Run the command `sudo cat /var/lib/jenkins/secrets/initialAdminPassword`
+
+3. Copy the string printed from the terminal to the jenkins site
+
+4. For plugins deselect everything then select
+   - Dashboard View
+   - Folders
+   - Build Name and Description Setter
+   - Build Timeout
+   - Credentials Binding
+   - Timestamper
+   - Workspace Cleanup
+   - Pipeline
+   - Pipeline: Stage View
+   - Git
+   - GitHub
+   - SSH Build Agents
+   - Matrix Authorization Strategy
+   - PAM Authentication
+   - LDAP
+   - Email Extension
+   - Mailer
+   - Publish Over SSH
+   - SSH
+
+5. Fill in the user details for your jenkins instance.
+
+### Saving Jenkins as a backup for future use
+
+We might want to save what we have just built as a digital ocean image for reuse later on.
+
+1. Navigate to digital ocean and select your droplet
+
+2. Turn off your droplet
+
+3. Navigate to snapshots and select take snapshot
+
+4. Congratulations you have finished setting up a CI Server
 
 ## Part 2: Configure building, testing and deployment for api with jenkins
 
