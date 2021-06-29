@@ -590,7 +590,7 @@ need to be renewed every three months.
 
 We will use a free tool created by lets encrypt in order to obtain there certificates called certbot.
 
-1. install certbot with `sudo dnf install certbot-nginx`
+1. install certbot with `sudo dnf install certbot python3-certbot-nginx`
 
 2. obtain a certificate by typing `sudo certbot --nginx -d jenkins.yourdomain`
 
@@ -611,13 +611,15 @@ systemd has multiple file types, some common ones are timers which run at a set 
 which listen and activate software when needed, and services which run through the duration from startup to
 shutdown. Creating cron jobs is easy, we can use the crontab command to quickly create cronjobs.
 
+First test nginx renewel with `sudo certbot renew --dry-run`
+
 `sudo crontab -e`
 
 add this line
 
 ```cron
 ...
-0 3 * * * /usr/bin/certbot renew --quiet
+0 3 * * * certbot renew --quiet
 ```
 
 this command makes cron run certbot renew at 3am every day.
