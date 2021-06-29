@@ -157,16 +157,15 @@ First create some account of a vps service, some recommendations
 
 1. Get started with a droplet after you log in
 
-2. Select CentOS 7.6 as the distribution
+2. Select CentOS 8.3 as the distribution
 
-3. Select a relevant storage size, cpu and memory, as long as they are standard
-   shared cpu droplets, it doesn't matter which one.
+3. Select a relevant storage size, cpu and memory, as long as they are standard shared cpu droplets, it doesn't matter
+   which one you pick.
 
-4. Choose any region, I shall be choosing singapore because it is closest.
+4. Choose any region, I shall be choosing singapore because it is closest to me in sydney.
 
-5. Choose Password instead of ssh, and don't select User Data, although if you
-   are familiar with these options then you can go ahead and select them.
-   Select a root password and continue.
+5. Choose Password instead of ssh, and don't select User Data, although if you are familiar with these options then you
+   can go ahead and select them. Select a root password and continue.
 
 6. One droplet with any available hostname, shall be using the default hostname
 
@@ -213,19 +212,16 @@ will direct to: your droplet
 
 Setting up SSH is pretty easy
 
-1. run the command `ssh-keygen` and simply press enter through all the options.
-   note that if you would like to set a password that is fine.
-2. Next add ssh to your github account, click your profile icon in the top right,
-   select `settings`, then under SSH and GPG keys click New SSh key on the top right.
-   Copy the your key with the command `cat .ssh/id_rsa.pub` this will print your
-   PUBLIC key to the terminal, as `cat` prints files to the terminal, and `.ssh/id_rsa.pub`
-   is the location of where your key is stored. ssh keys have a private and a public
-   component. The private is the key and only you can access it, the public key is like
-   providing the lock that they key fits so never give your private key away.
-3. now in your server instance, find what the servers public ip is (remember to
-   provide instructions for this) and run the command `ssh-copy-id root@yourdomain` where
-   the server ip is the public ip address to your server. (Note: sometimes it takes a while
-   for domains to get registered when switching nameservers, in that case use the ip)
+1. Run the command `ssh-keygen` and simply press enter through all the options. Note that if you would like to set a
+   password that is fine.
+2. Next add ssh to your github account, click your profile icon in the top right, select `settings`, then under SSH and
+   GPG keys click New SSh key on the top right. Copy the your key with the command `cat .ssh/id_rsa.pub` this will print
+   your PUBLIC key to the terminal, as `cat` prints files to the terminal, and `.ssh/id_rsa.pub` is the location of
+   where your key is stored. ssh keys have a private and a public component. The private is the key and only you can
+   access it, the public key is like providing the lock that they key fits so never give your private key away.
+3. now in your server instance, find what the servers public ip is (remember to provide instructions for this) and run
+   the command `ssh-copy-id root@yourdomain` where the server ip is the public ip address to your server. (Note:
+   sometimes it takes a while for domains to get registered when switching nameservers, in that case use the ip)
 
 We done for now.
 
