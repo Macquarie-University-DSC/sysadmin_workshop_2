@@ -2,12 +2,13 @@
 
 In this workshop we plan to 
 
-1. Deploy a static website using devops principles
-2. Deploy a dynamic website with an api with devops principles 
+1. Show how to set up and create a CI/CD environment with Jenkins
+2. Deploy a testing/staging for our website with devops principles.
+3. Deploy a production environment for our website.
 
 Notice that while the website, and the api are very simple, something that would
-be trivial to deploy. These methods are not for these websites, these are mean't
-to be applied to enterprise level apps on a large or small scale. So apps that
+be trivial to deploy. These methods are for websites people would continuously
+develop, these are mean't to be applied to start ups small enterprise or even apps on a large or small scale. So apps that
 while they don't have to be massive apps, they are generally mean't to be apps
 that teams of people would work on.
 
@@ -24,15 +25,14 @@ In terms of what software would be required to follow along in case you want to
 follow along which is not required, can just listen.
 
 1. A github account connected to your university or instituition (see 2)
-2. Would need the student developer pack from github, should take about
-   three seconds and a university email to apply for one.
-3. Namecheap domain (free with student developer pack and a .me extension) Look up
-   instructions on github student pack and google.
-4. Some vps (digital ocean droplet recommended) just the account needed setting
-   them up will be covered, also doing these things are provider agnostic, i'll 
-   probably use digital ocean, but i'll try provide instructions for all 
-   platforms
-5. You NEED no way of getting around, some sort of unix shell. Instructions
+2. Would need the student developer pack from github, should take about three seconds and a university email to apply
+   for one.
+3. Namecheap domain (free with student developer pack and a .me extension) Look up instructions on github student pack
+   and google.
+4. Some vps (digital ocean droplet recommended) just the account needed setting them up will be covered, also doing
+   these things are provider agnostic, i'll  be using digital ocean but these apply to all platforms, since they all
+   provide similar experiences. 
+5. You NEED some way of getting around, some sort of unix shell. Instructions
    below.
 
 ### Windows Unix Shell
@@ -74,33 +74,26 @@ See the macos for packages, but everything else should be fine.
 
 ## Introduction: What is devops and continuous delivery
 
-From what I have read on the internet, most sys admins describe devops as a way
-of life.
+From what I have read on the internet, most sys admins describe devops as a way of life.
 
-Now devops is seperate from the agile methodology but they often are used 
-together and I find that they are easier to explain together.
+Now devops is seperate from the agile methodology but they often are used together and I find that they are easier to
+explain together.
 
-Before the way software used to be developed is you would have a phase of 
-development, then you would extensively test the app, and then you would release
-(deploy) the app. These would happen in big increments of months or years and
-follow a strict plan or schedule, then after this process you would discard and
-move onto the second version, often a complete rewrite. They would often have a 
-support period where they have hotfixes and patches but rarely big rewrites or 
-new features often resulting in overall outdated and less quality in software.
+Before the way software used to be developed is you would have a phase of development, then you would extensively test
+the app, and then you would release (deploy) the app. These would happen in big increments of months or years and follow
+a strict plan or schedule, then after this process you would discard and move onto the second version, often a complete
+rewrite. They would often have a support period where they have hotfixes and patches but rarely big rewrites or new features
+often resulting in overall outdated and less quality in software.
 
-The agile methodology takes the same simple idea of having a 
-development -> test -> deploy cycle but instead these happen in smaller 
-increments, and often have not quite extensive testing, then they wait for new 
-issues to arise whether it be from the development point of view, or the users
-point of view, and then repeat the cycle. It's agile because it is a cycle of 
-feedback and incremental versions.
+The agile methodology takes the same simple idea of having a development -> test -> deploy cycle but instead these
+happen in smaller increments, and often have not quite extensive testing, then they wait for new issues to arise whether
+it be from the development point of view, or the users point of view, and then repeat the cycle. It's agile because it
+is a cycle of feedback and incremental versions.
 
-While in theory agile works, in practice, having to redeploy the app every 
-increment or version or redo testing is a tedious and not worth while job. It 
-makes the agile methodology fall short. Devops and continuous delivery is a 
-process used to automate the process of deployment and testing. These convert
-the testing and the release phases of agile into what we would call a devops 
-pipeline.
+While in theory agile works, in practice, having to redeploy the app every increment or version or redo testing is a
+tedious and not worth while job. It makes the agile methodology fall short. Devops and continuous delivery is a process
+used to automate the process of deployment and testing. These convert the testing and the release phases of agile into
+what we would call a devops pipeline.
 
 A devops pipeline looks like.
 
@@ -108,17 +101,17 @@ Push from source control -> Staging -> Deploy
 
 Where the first step is the development process.
 
-Staging is where you build the app, extensively test it, then you create 
-what we call artifacts such as the actual release binaries of the app.
+Staging is where you build the app, extensively test it, then you create what we call artifacts such as the actual
+release binaries of the app or in our case digital ocean droplet images with our app installed.
 
-Deployment is the task of configuring the server for production, and making it
-accessible on the internet, taking the artifacts from the build process.
+Deployment is the task of configuring the server for production, and making it accessible on the internet, taking the
+artifacts from the build process.
 
-You can easily apply devops to nearly all your projects, being on a university 
-level or on a professional level but depending on the amount of enterpriseness 
-you might change your setup for example you could use github actions for open 
-source or university development as your dev ops pipeline, or you might use 
-ansible and jenkins like we will for something more enterprizy.
+Dev ops really is anything with a automation pipeline from source code to deployed, that means that this can be
+something like github actions, gitlab ci/cd, travis ci or whatever your hearts desire. Jenkins is a middle ground CI
+for more professional uses that allows you to self host a CI/CD instance and is what we will be using. Larger
+enterprises like google might use kubernetes and docker, using a pipeline to build and test on docker, then deploying
+with kubernetes on multiple servers.
 
 ## Steps to setup postgres
 
@@ -131,14 +124,32 @@ ansible and jenkins like we will for something more enterprizy.
 6. Now run `GRANT ALL PERMISSIONS ON DATABASE todo_db TO exampleuser123;` and quit with ctrl+D
 
 
-## PART 1: Setting up a VPS CentOS Instance
+## PART 1: Setting up a VPS CentOS Instance for Jenkins
 
-### Create accounts and 
-First create some account of a vps service, three are recommended
+For the actual deployment and testing I will use a instance of jenkins deployed on my personal computer. If you want to
+work in a team based environment you would need to setup a seperate server for CI/CD. These steps will show you how to
+do that, however since hosting costs $$$ we will delete the container as soon as its made.
+
+### A quick note on choosing linux distributions
+
+So for devops servers it does not matter what we choose as our operating system, as long as it fullfills our needs, if
+anyone has been watching the news on Linux CentOS you would have heard of the controversy of CentOS a typical downstream
+of rhel (RHEL is a paid linux distribution for running web services and centos copies the source code) to an upstream
+distro (basically RHEL beta). This means some of the security benefits CentOS provided are no longer there, but most
+importantly to sysadmins is that CentOS used to have a support cycle of around 10 years, and that has now shifted to 3
+years, therefore CentOS is no longer a recommended distro for deploying high availability web applications. On the other
+hand, using CentOS 8 (or stream) for deploying CI/CD instances is a great idea since there is no need for predictability
+or high stakes security management. For deploying the actual web app we plan on using Rocky Linux, a community based
+RHEL fork, but you can choose whatever Long Term Support distro you want (recommend debian, opensuse or freebsd).
+
+### Create some digital ocean accounts
+
+First create some account of a vps service, some recommendations
   
 - Digital Ocean Droplet
 - Google CentOS Instance
 - Microsoft Azure
+- Amazon AWS
 
 ### Create a VPS Instance
 
@@ -615,12 +626,12 @@ this command makes cron run certbot renew at 3am every day.
 
 ### Ansible
 
-## Part 2: Deploy a static website with nginx, http2 and https with ansible+jenkins
+## Part 2: Configure building, testing and deployment for api with jenkins
+
+### Service Daemons, and more SELinux
+
+## Part 3: Deploy a static website with nginx, http2 and https with ansible+jenkins
 
 ### Setting up Jenkins and github integration
 
 ### More Users, Groups and SELinux
-
-## Part 3: Configure building, testing and deployment for api with jenkins
-
-### Service Daemons, and more SELinux
