@@ -181,7 +181,9 @@ provider you use since they are all pretty much the same, and we won't be using
 namecheaps dns anyway.
 
 1. Log into namecheap.com and navigate to Dashboard.
+
 2. Navigate to your domain, and select manage
+
 3. Under name servers, change to custom dns, and set the nameservers to the following
 
 ```
@@ -214,11 +216,13 @@ Setting up SSH is pretty easy
 
 1. Run the command `ssh-keygen` and simply press enter through all the options. Note that if you would like to set a
    password that is fine.
+
 2. Next add ssh to your github account, click your profile icon in the top right, select `settings`, then under SSH and
    GPG keys click New SSh key on the top right. Copy the your key with the command `cat .ssh/id_rsa.pub` this will print
    your PUBLIC key to the terminal, as `cat` prints files to the terminal, and `.ssh/id_rsa.pub` is the location of
    where your key is stored. ssh keys have a private and a public component. The private is the key and only you can
    access it, the public key is like providing the lock that they key fits so never give your private key away.
+
 3. now in your server instance, find what the servers public ip is (remember to provide instructions for this) and run
    the command `ssh-copy-id root@yourdomain` where the server ip is the public ip address to your server. (Note:
    sometimes it takes a while for domains to get registered when switching nameservers, in that case use the ip)
@@ -227,17 +231,15 @@ We done for now.
 
 ### Note on systemctl and services
 
-All operating systems have software that runs in the background, they do things like
-make sure that the time is synchronised with the rest of the world, they provide
-resources for apps that run in the foreground. These are commonly called Daemon
-services.
+All operating systems have software that runs in the background, they do things like make sure that the time is
+synchronised with the rest of the world, they provide resources for apps that run in the foreground. These are commonly
+called Daemon services.
 
-In windows it is kind of difficult from my experience (not a windows user tho) to
-create and manage services. If we want to make an app that runs when we start up our
-computers and runs in the background it can be quite tedious. Linux on the other hand
-has a tool that allows us to do this, it is called systemd and can be managed using
-systemd service files usually with the extensions of `.socket` and `.service` and
-managed with `systemctl`. Read more on the archwiki https://wiki.archlinux.org/index.php/systemd 
+In windows it is kind of difficult from my experience (not a windows user tho) to create and manage services. If we want
+to make an app that runs when we start up our computers and runs in the background it can be quite tedious. Linux on the
+other hand has a tool that allows us to do this, it is called systemd and can be managed using systemd service files
+usually with the extensions of `.socket` and `.service` and managed with `systemctl`. Read more on the
+[archwiki page](https://wiki.archlinux.org/index.php/systemd) 
 
 Systemctl has the commands
 
@@ -250,59 +252,51 @@ Systemctl has the commands
 
 You can view the systemd logs with the `journalctl` command.
 
-`.socket` files often are services that start when they are needed, like a printing service only starts
-when you need to print something, and `.service` files are for services that run all the time.
+`.socket` files often are services that start when they are needed, like a printing service only starts when you need to
+print something, and `.service` files are for services that run all the time.
 
 You can also specify services for specific users only but read the archwiki for that.
 
 ### A note on the linux filestructure
 
-The linux filesystem structure is a standard created by the linux foundation and
-specified under the Filesystem Hierarchy Standard, more information can be found
-on wikipedia https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard
+The linux filesystem structure is a standard created by the linux foundation and specified under the Filesystem
+Hierarchy Standard, more information can be found on
+[the wikipedia page](https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard)
 
-This isn't too important here except when we get to setting up nginx, and is a
-bit of a point of contention among system administrators. To understand why
-there are some important directories which we have to explain.
+This isn't too important here except when we get to setting up nginx, and is a bit of a point of contention among
+system administrators. To understand why there are some important directories which we have to explain.
 
-The root `/` is where everything goes into, equivalent of the `C:` drive in
-windows.
+The root `/` is where everything goes into, equivalent of the `C:` drive in windows.
 
-The `/etc` directory is where applications put there global configurations, that
-when they start all configuration options and files are mean't to be put here.
+The `/etc` directory is where applications put there global configurations, that when they start all configuration
+options and files are mean't to be put here.
 
-The `/usr` directory specifies read only files used by apps, a common example
-would be icons, music or stuff in a game, they are read only because they never
-need to be modified.
+The `/usr` directory specifies read only files used by apps, a common example would be icons, music or stuff in a game,
+they are read only because they never need to be modified.
 
-The `/var` directory is kind of like the read and write counter part of the
-`/usr` directory, things that do need to be modified but aren't configuration
-files often go here.
+The `/var` directory is kind of like the read and write counter part of the `/usr` directory, things that do need to be
+modified but aren't configuration files often go here.
 
-The `/srv` directory is what causes the controversy, according to the linux
-standard, files which are mean't to be used for servers such as directories
-which are used as remote file storage like google drive kind of things go here,
+The `/srv` directory is what causes the controversy, according to the linux standard, files which are mean't to be used
+for servers such as directories which are used as remote file storage like google drive kind of things go here,
 and static website files.
 
-In nginx it has become standard to put your website in the `/var/www` directory,
-this to me personally isn't the right place to put them, some system admins
-share this opinion while others feel that it is better to follow the standards
-of nginx for consistancy. Nearly all guides on the internet will use `/var/www`
-while we will be using `/srv/www` instead.
+In nginx it has become standard to put your website in the `/var/www` directory, this to me personally isn't the right
+place to put them, some system admins share this opinion while others feel that it is better to follow the standards
+of nginx for consistancy. Nearly all guides on the internet will use `/var/www` while we will be using `/srv/www`
+instead.
 
 ### Users and permissions
 
 In linux we have users and groups
 
-Linux contains a simple permissions model, each service has permission information, they
-can be read, written, or executed (like opening up an app in windows). You can
-view permission with the `ls -a` command, it appears with something of the form of
-`drwxrw-r-- user group`, the first letter `d` tells us whether it is a directory or not. The
-next three characters are in the form of `rwx` where `r` is the read permission, `w`
-is the write permission, `x` is the execute permission, and `-` says they do not have
-the given permission. A file often belongs to a user and a group, the permissions tells us
-what permissions the user who owns the file has, what permissions the group who owns the
-file has and what permissions everyone else (others) has.
+Linux contains a simple permissions model, each service has permission information, they can be read, written, or
+executed (like opening up an app in windows). You can view permission with the `ls -a` command, it appears with
+something of the form of `drwxrw-r-- user group`, the first letter `d` tells us whether it is a directory or not. The
+next three characters are in the form of `rwx` where `r` is the read permission, `w` is the write permission, `x` is the
+execute permission, and `-` says they do not have the given permission. A file often belongs to a user and a group, the
+permissions tells us what permissions the user who owns the file has, what permissions the group who owns the file has
+and what permissions everyone else (others) has.
 
 Example:
 
@@ -310,108 +304,110 @@ Example:
 
 `r-x` - Read and execute but no write permission.
 
-Note that `rwx` is repeated three times, the first time is the read, write and execute
-permissions for a user, the second is for a group, and the third is for the entire system
-commonly called others.
+Note that `rwx` is repeated three times, the first time is the read, write and execute permissions for a user, the
+second is for a group, and the third is for the entire system commonly called others.
 
-In linux we want to restrict access as much as possible to prevent things from
-having access to other things they shouldn't.
+In linux we want to restrict access as much as possible to prevent things from having access to other things they
+shouldn't.
 
-In linux a user is like a user of an account like in windows or mac, and a group is just
-a group of users. When we add permissions to a specific user, only that user can access
-that resource, but if we need some users to access a resource but others not be able to
-access a given resource, then we can create a group. 
+In linux a user is like a user of an account like in windows or mac, and a group is just a group of users. When we add
+permissions to a specific user, only that user can access that resource, but if we need some users to access a resource
+but others not be able to access a given resource, then we can create a group. 
 
 Note on `gpasswd` vs `usermod`
 
 There are two ways to add a user to a group, `usermod -aG somegroup username` and `gpasswd -a username somegroup`
 
-The difference is subtle, but `usermod` modifies the users configuration with options such
-as changing there default terminal shell, or adding and removing groups.
+The difference is subtle, but `usermod` modifies the users configuration with options such as changing there default
+terminal shell, or adding and removing groups.
 
-`usermod` has two options that we will look at `-G` which gives a user certain groups, and `-a`,
-which adds the pre-existing groups that a user had to the user. Now the problem is if you
-accidentally forget the `-a` flag, you end up removing the groups a user alread had, and
-so this can be considered more risky, in practice this rarely happens. On the otherhand
-`gpasswd` can either add or remove groups so it is therefore a safer option.
+`usermod` has two options that we will look at `-G` which gives a user certain groups, and `-a`, which adds the
+pre-existing groups that a user had to the user. Now the problem is if you accidentally forget the `-a` flag, you end up
+removing the groups a user alread had, and so this can be considered more risky, in practice this rarely happens. On the
+otherhand `gpasswd` can either add or remove groups so it is therefore a safer option.
 
-1. run the command `adduser exampleuser` where the user is your username in my case
-   emendoza.
+1. run the command `adduser exampleuser` where the user is your username in my case emendoza.
+
 2. set a passwd for your user with the command `passwd exampleuser`
-3. run the command `gpasswd -a exampleuser wheel` this adds our user to the wheel
-   group. In Linux, the wheel group is like the admin role in windows.
+
+3. run the command `gpasswd -a exampleuser wheel` this adds our user to the wheel group. In Linux, the wheel group is
+   like the admin role in windows.
+
 4. Logout of ssh with Ctrl+D or type `exit` into the cli.
-5. Now repeat the command `ssh-copy-id exampleuser@yourdomain` notice we are now
-   using the example user instead of root.
+
+5. Now repeat the command `ssh-copy-id exampleuser@yourdomain` notice we are now using the example user instead of root.
 
 ### Install required software
 
-1. Run command `sudo yum upgrade` to make sure we are downloading the latest versions.
-2. Run command `sudo yum install vim-enhanced`
-3. Run command `sudo yum install epel-release` to install the red hat extra packages.
+1. Run command `sudo dnf upgrade` to make sure we are downloading the latest versions.
+
+2. Run command `sudo dnf install vim-enhanced`
+
+3. Run command `sudo dnf install epel-release` to install the red hat extra packages.
 
 ### Change ssh settings
 
-We will use vim for this, if you are unfamiliar use replace `vim` with `nano`,
-but remember, as described in the Unix and Linux System Administration Handbook
-System administrators will judge you so do it descretely if you plan to deploy
+We will use vim for this, if you are unfamiliar use replace `vim` with `nano`, but remember, as described in the Unix
+and Linux System Administration Handbook System administrators will judge you so do it descretely if you plan to deploy
 infront of other system admins.
 
 1. enter the command `sudo vim /etc/ssh/sshd_config`
+
 2. change the line `PermitRootLogin yes` to `PermitRootLogin no`
+
 3. change the line `PasswordAuthentication yes` to `PasswordAuthentication no`
+
 4. quit vim with `:wq`
+
 5. reload ssh daemon with `sudo systemctl reload sshd`
+
 6. Test it works before you exit by entering a new terminal and typing `ssh exampleuser@yourdomain`
 
 ### Firewall
 
-A server works by exposing all ports available to the outside world. As system administrators one
-of our primary jobs is to restrict the access of the outside world to be able to only access what
-they need. So we can directly access our server, but nobody else should be able to, similarly when
-we serve our website, we want people only to be able to access what they need to see the website,
-we don't want them to be able to access anything else. A firewall makes it so that people can only
-access ports that we specify, with all other ports still being accessible internally.
+A server works by exposing all ports available to the outside world. As system administrators one of our primary jobs is
+to restrict the access of the outside world to be able to only access what they need. So we can directly access our
+server, but nobody else should be able to, similarly when we serve our website, we want people only to be able to access
+what they need to see the website, we don't want them to be able to access anything else. A firewall makes it so that
+people can only access ports that we specify, with all other ports still being accessible internally.
 
 #### About firewalld
-for this workshop we will use firewalld, it works by having default zones, a zone is an area that
-the network runs in, for example, you might have a zone for local computers in an office, and a zone
-for computers outside in the public, or a zone for just the computer specifically. Each zone might
-have certain services enabled such as you might have http enabled publically for everyone, but only
-have ssh enabled for users within the local network.
 
-More information about firewalld can be found by googling archwiki firewalld, and you can see what
-commands are available by reading the manual with `man firewall-cmd`.
+For this workshop we will use firewalld, it works by having default zones, a zone is an area that the network runs in,
+for example, you might have a zone for local computers in an office, and a zone for computers outside in the public, or
+a zone for just the computer specifically. Each zone might have certain services enabled such as you might have http
+enabled publically for everyone, but only have ssh enabled for users within the local network.
 
-1. Run command `sudo yum install firewalld`
+More information about firewalld can be found by googling archwiki firewalld, and you can see what commands are
+available by reading the manual with `man firewall-cmd`.
+
+1. Run command `sudo dnf install firewalld`
+
 2. start firewall service with `sudo systemctl start firewalld`
+
 3. add ssh to the firewall permissions list with `sudo firewall-cmd --permanent --add-service=ssh`
+
 4. type `sudo firewall-cmd --relaod` to enable changes
+
 5. similar to before open up a new terminal and see if you can still access the server.
+
 6. if it all works enable changes with `sudo systemctl enable firewalld`
 
 ### Timezones
 
-It is worthwhile to change the timezone of the server to the local timezone you are in especially
-dealing with databases and such. As a side note I often change the local timezone of my databases
-and api's to UTC and let region specific time information be handled on the client side.
+It is worthwhile to change the timezone of the server to the local timezone you are in especially dealing with databases
+and such. As a side note I often change the local timezone of my databases and api's to UTC and let region specific time
+information be handled on the client side.
 
 1. Find which timezone you want by running the command `sudo timedatectl list-timezones`
-2. Navigate with the j and the k keys `j` for up and `k` for down. You can also search with
-   the `/` command. for example `/Australia` for all regions in australia.
-3. Next set your region as default with `sudo timedatectl set-timezone region/timezone`, for
-   example, `sudo timedatectl set-timezone Australia/Sydney`
+
+2. Navigate with the j and the k keys `j` for up and `k` for down. You can also search with the `/` command. for example
+   `/Australia` for all regions in australia.
+
+3. Next set your region as default with `sudo timedatectl set-timezone region/timezone`, for example,
+   `sudo timedatectl set-timezone Australia/Sydney`
+
 4. Confirm with `sudo timedatectl`
-
-#### Installing NTP
-
-We might want to sync our time with servers to make sure we have
-the correct time. In order to do this follow these commands to
-configure a service to sync time with the networks
-
-1. Install ntp daemon with `sudo yum install ntp`
-2. start and enable service with `sudo systemctl start ntpd` and
-   `sudo systemctl enable ntpd`
 
 ### Jenkins
 
@@ -439,28 +435,34 @@ instructions to set up nginx and jenkins. https://www.jenkins.io/doc/book/
 
 Jenkins runs on Java 8 at this point in time only sadly so don't try and use a more recent jdk.
 
-1. Enable the jenkins repository (tell centos where to download jenkins from) with `sudo curl -o /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.io.key`
-2. Import the hash keys for jenkins repository (make sure that we are really downloading jenkins rather then virus') with `sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key`
-3. Upgrade all the repositories to make sure we are downloading the latest jenkins with `sudo yum upgrade`
-4. Finally install jenkins with `sudo yum install jenkins java-11-openjdk-devel`
+1. Enable the jenkins repository (tell centos where to download jenkins from) with 
+   `sudo curl -o /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo`
+
+2. Import the hash keys for jenkins repository (make sure that we are really downloading jenkins rather then virus')
+   with `sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key`
+
+3. Upgrade all the repositories to make sure we are downloading the latest jenkins with `sudo dnf upgrade`
+
+4. Finally install jenkins with `sudo dnf install jenkins java-11-openjdk-devel`
+
 5. reload systemctl `sudo systemctl daemon-reload`
+
 6. Now start the jenkins service with `sudo systemctl start jenkins`
+
 7. Check if it worked with `sudo systemctl status jenkins`
+
 8. If everything worked correctly enable on startup with `sudo systemctl enable jenkins`
 
 We are done installing jenkins but we will revisit later for some configuration in the nginx section.
 
 ### A quick note on SELinux
 
-We will have our first experiences dealing with the pain in the ass that is 
-selinux. SELinux stands for Security Enhanced Linux and is like an extra more
-intense linux permissions layer. Instead of files having just read, write and
-execute permissions they also have policies about what they are allowed to do
-on the system and what they are used for. SELinux on the scale we are using here
-isn't too bad, and since it is so common for linux files and folders to be used
-for what they are, most of CentOS already has default SELinux policies that we
-need to enable or restore manually. As a website scales, SELinux becomes harder
-and harder. Learning SELinux is kind of a thing on it's own and so I wouldn't
+We will have our first experiences dealing with the pain in the ass that is selinux. SELinux stands for Security
+Enhanced Linux and is like an extra more intense linux permissions layer. Instead of files having just read, write and
+execute permissions they also have policies about what they are allowed to do on the system and what they are used for.
+SELinux on the scale we are using here isn't too bad, and since it is so common for linux files and folders to be used
+for what they are, most of CentOS already has default SELinux policies that we need to enable or restore manually. As a
+website scales, SELinux becomes harder and harder. Learning SELinux is kind of a thing on it's own and so I wouldn't
 stress about it.
 
 SELinux has three modes
@@ -469,99 +471,91 @@ SELinux has three modes
 - Permissive: if a selinux check fails an error is logged but service still runs
 - Disabled: selinux policies aren't checked at all.
 
-Generally it is a good idea to turn selinux to permissive, while deploying a
-server and change it to enabled later. https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/using_selinux/changing-selinux-states-and-modes_using-selinux
+Generally it is a good idea to turn selinux to permissive, while deploying a server and change it to enabled later.
+[Changing Selinux state guide](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/using_selinux/changing-selinux-states-and-modes_using-selinux)
 
 ### Nginx
 
-Nginx is kind of like the server part of our server, we use it to manage routes
-and http access to our server. Most backend web frameworks like flask, django,
-actix, and others don't require it since they can serve the html files
-themselves. On the other hand I often use it anyway because it can be used to
-easily add advanced features like compression, https and http2 to our web pages,
-and in the example of jenkins, we can use jenkins by itself now, but we would
-need to access an ugly route like https://www.howgood.me:8080, nginx allows us
-to instead use the route in the form of https://jenkins.howgood.me
+Nginx is kind of like the server part of our server, we use it to manage routes and http access to our server. Most
+backend web frameworks like flask, django, actix, and others don't require it since they can serve the html files 
+themselves. On the other hand I often use it anyway because it can be used to easily add advanced features like
+compression, https and http2 to our web pages, and in the example of jenkins, we can use jenkins by itself now, but we
+would need to access an ugly route like https://www.howgood.me:8080, nginx allows us to instead use the route in the
+form of https://jenkins.howgood.me
 
 #### Installing nginx
 
 Nginx is in the extras repo for centos which we already installed before.
 
-1. Simply type `sudo yum install nginx`
+1. Simply type `sudo dnf install nginx`
+
 2. Start nginx with `sudo systemctl start nginx`
+
 3. Check if nginx is working with `sudo systemctl status nginx`
+
 4. If everything works enable with `sudo systemctl enable nginx`
+
 5. Now add nginx to firewall with `sudo firewall-cmd --add-service=http`
+
 6. Also add https for later `sudo firewall-cmd --add-service=https`
+
 7. Save changes with `sudo firewall-cmd --runtime-to-permanent`
 
 #### Setting up blocks in nginx
 
-In nginx you can set up 'blocks' which point to specific domains, that means
-you can have multiple different domains that point to the same server!
+In nginx you can set up 'blocks' which point to specific domains, that means you can have multiple different domains
+that point to the same server!
 
-For example we will have 3 different blocks a `jenkins.yourdomain` block
-for jenkins, a `www.yourdomain` block for the static component, and a
-`api.yourdomain` block for our api. This isn't enabled by default.
+We will only be using a single block so it's kind of pointless but it's handy for using later if for example you wanted
+to deploy a static website and an api on the same server.
 
-1. First make the directory we will put our html files in with `sudo mkdir /srv/www`
-2. Give this directory read write and execute permissions for sudo user, read
-   and execute permissions for the group, and others with 
-   `sudo chmod 755 /srv/www` and check with `ls -l /srv`
-3. Make a server staging configurations directory with 
-   `sudo mkdir /etc/nginx/sites-available` this is where we write our server
-   configurations.
-4. Make a server deployment configurations directory with
-   `sudo mkdir /etc/nginx/sites-enabled` this is where our finished
-   configurations go.
-5. Run the command `sudo restorecon -v /srv/www` to add proper selinux policies
-   to this directory.
+1. Make a server staging configurations directory with `sudo mkdir /etc/nginx/sites-available` this is where we write
+   our server configurations.
 
-Now we need to modify the `/etc/nginx/nginx.conf` file, I will use the command
-`sudo vim /etc/nginx/nginx.conf` replace vim with nano if you aren't 
-comfortable with vim.
+2. Make a server deployment configurations directory with `sudo mkdir /etc/nginx/sites-enabled` this is where our
+   finished configurations go.
 
-Go to where is says `http {` and scroll to below the matching `}` bracket and
-add the following lines after the bracket.
+3. Now we need to modify the `/etc/nginx/nginx.conf` file, I will use the command `sudo vim /etc/nginx/nginx.conf`
+replace vim with nano if you aren't comfortable with vim.
+
+Go to where is says `http {` and scroll to below the matching `}` bracket and add the following lines after the bracket.
 
 ```
 include /etc/nginx/sites-enabled/*.conf;
 server_names_hash_bucket_size 64;
 ```
 
-last step is to restart nginx to enable changes with `sudo systemctl restart nginx`
+4. last step is to restart nginx to enable changes with `sudo systemctl restart nginx`
 
 #### Setting up jenkins with nginx
 
-Up until now we have been using vim and manually writing the files, but if you
-look at the file `nginx_configs/jenkins.yourdomain.me.conf` downloaded with the project
-it is quite big!
+Up until now we have been using vim and manually writing the files, but if you look at the file
+`nginx_configs/jenkins.yourdomain.me.conf` downloaded with the project it is quite big!
 
 Of course you are welcome to manually rewrite it all into the file
-`/etc/nginx/sites-available/jenkins.yourdomain.me.conf` but that is a pain so
-we are gonna cheat a little.
+`/etc/nginx/sites-available/jenkins.yourdomain.me.conf` but that is a pain so we are gonna cheat a little.
+
+First step is to modify the file in whatever text editor you like edit the file
+`nginx_configs/jenkins.yourdomain.me.conf`
+
+1. Rename the file to have your domain name (eg `jenkins.howgood.me.conf`).
+
+2. Edit the file where it says `server_name` to your actual domain (eg `jenkins.howgood.me`).
 
 We are gonna use rsync to copy the file to our server with
 
 `rsync nginx_configs/jenkins.yourdomain.me.conf yourusername@youdomain:~`
 
-Next we are gonna move the file with the `mv` command to 
-`/etc/nginx/sites-available/jenkins.yourdomain.conf` note that mv is the same
-as cut in windows.
+Next we are gonna move the file with the `mv` command to  `/etc/nginx/sites-available/jenkins.yourdomain.conf` note that
+mv is the same as cut in windows.
 
 `sudo mv jenkins.yourdomain.me.conf /etc/nginx/sites-available/jenkins.yourdomain.conf`
-
-for example `sudo mv jenkins.yourdomain.me.conf /etc/nginx/sites-available/jenkins.howgood.me.conf`
 
 Now we have to make an error log directory
 
 `sudo mkdir /var/log/nginx/jenkins`
 
-Edit the file with `sudo vim /etc/nginx/sites-available/jenkins.yourdomain.conf`
-and change the line next to `server_name` to jenkins.yourdomain.me
-
-Add a symbolic link (look up symbolic link if you don't know what it means) with
-the sites-enabled folder.
+Add a symbolic link (look up symbolic link if you don't know what it means) with the sites-enabled folder.
 
 `sudo ln -s /etc/nginx/sites-available/jenkins.yourdomain.conf /etc/nginx/sites-enabled/jenkins.yourdomain.conf`
 
@@ -571,33 +565,41 @@ Test with nginx test
 
 Now we gotta mess with permissions and users
 
-1. first change the user to root with `sudo chown root /etc/nginx/sites-available/jenkins.yourdomain.conf`
-2. now change the group to root with `sudo chgrp root /etc/nginx/sites-available/jenkins.yourdomain.conf`
-3. now we have to give the jenkins user the group nginx with `sudo gpasswd -a jenkins nginx`
-4. Run the command `sudo restorecon -Rv /etc/nginx/sites-available` to add
-   the proper selinux policies for all the files in that directory.
-5. add selinux permissions for http services to forward other http services with
+1. First change the user to root with `sudo chown root /etc/nginx/sites-available/jenkins.yourdomain.conf`
+
+2. Now change the group to root with `sudo chgrp root /etc/nginx/sites-available/jenkins.yourdomain.conf`
+
+3. Now we have to give the jenkins user the group nginx with `sudo gpasswd -a jenkins nginx`
+
+4. Run the command `sudo restorecon -Rv /etc/nginx/sites-available` to add the proper selinux policies for all the files
+   in that directory.
+
+5. Add selinux permissions for http services to forward other http services with
    `sudo setsebool -P httpd_can_network_relay 1`
-6. Restart nginx with `sudo systemctl restart nginx` and open your browser
-   and navigate to http://jenkins.yourdomain
+
+6. Restart nginx with `sudo systemctl restart nginx` and open your browser and navigate to http://jenkins.yourdomain
 
 ### Certbot and https
 
-Since we will be using passwords and transferring secure information our next step must
-be to add http over tls support to our jenkins (CI) server. For this there are multiple ways
-including buying a expensive certificate, another way is to use a free lets encrypt
-certificate. The benefit of buying a certificate is that they provide higher validation
-levels are generally more trusted and provide warrantys. The biggest benefit is probably
-that they are renewed less, free certificates are alright and generally way more secure then
-not having one, although, since they are provided free they need to be renewed every three months. 
+Since we will be using passwords and transferring secure information our next step must be to add http over tls support
+to our jenkins (CI) server. For this there are multiple ways including buying a expensive certificate, another way is to
+use a free lets encrypt certificate. The benefit of buying a certificate is that they provide higher validation levels
+are generally more trusted and provide warrantys. The biggest benefit is probably that they are renewed less, free
+certificates are alright and generally way more secure then not having one, although, since they are provided free they
+need to be renewed every three months. 
 
 We will use a free tool created by lets encrypt in order to obtain there certificates called certbot.
 
-1. install certbot with `sudo yum install certbot-nginx`
+1. install certbot with `sudo dnf install certbot-nginx`
+
 2. obtain a certificate by typing `sudo certbot --nginx -d jenkins.yourdomain`
+
 3. type your email address used for renewal and security purposes (for me it's 'admin@effectfree.dev')
+
 4. Read through the options and select which ones you want (I just put yes for everything)
+
 5. Once this is complete you can test your configuration with the [SSL Labs Server Test](https://www.ssllabs.com/ssltest/)
+
 6. Now setting up auto renewal requires cron.
 
 #### A Quick Note on cron
@@ -627,6 +629,18 @@ this command makes cron run certbot renew at 3am every day.
 ### Service Daemons, and more SELinux
 
 ## Part 3: Deploy a static website with nginx, http2 and https with ansible+jenkins
+
+## Nginx statis site stuff
+
+1. First make the directory we will put our html files in with `sudo mkdir /srv/www`
+
+2. Give this directory read write and execute permissions for sudo user, read
+   and execute permissions for the group, and others with 
+   `sudo chmod 755 /srv/www` and check with `ls -l /srv`
+
+3. Run the command `sudo restorecon -v /srv/www` to add proper selinux policies
+   to this directory.
+
 
 ### Setting up Jenkins and github integration
 
