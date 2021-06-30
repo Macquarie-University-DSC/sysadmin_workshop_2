@@ -3,14 +3,15 @@
 In this workshop we plan to 
 
 1. Show how to set up and create a CI/CD environment with Jenkins
+
 2. Deploy a testing/staging for our website with devops principles.
+
 3. Deploy a production environment for our website.
 
-Notice that while the website, and the api are very simple, something that would
-be trivial to deploy. These methods are for websites people would continuously
-develop, these are mean't to be applied to start ups small enterprise or even apps on a large or small scale. So apps that
-while they don't have to be massive apps, they are generally mean't to be apps
-that teams of people would work on.
+Notice that while the website, and the api are very simple, something that would be trivial to deploy. These methods are
+for websites people would continuously develop, these are mean't to be applied to start ups small enterprise or even
+apps on a large or small scale. So apps that while they don't have to be massive apps, they are generally mean't to be
+apps that teams of people would work on.
 
 ## Prerequisites
 
@@ -18,44 +19,43 @@ In terms of knowledge it would be helpful but not necessarily required to knowle
 
 - Basic unix/linux file structures and directory structures (not essential)
 - Basic unix/linux commands (just look them up if you struggle)
-- Vim or Vi text editing (can also use the nano text editor, but vscode is not 
-  gonna help)
+- Vim or Vi text editing (can also use the nano text editor, but vscode is not gonna help)
 
-In terms of what software would be required to follow along in case you want to
-follow along which is not required, can just listen.
+In terms of what software would be required to follow along in case you want to follow along which is not required, can
+just listen.
 
 1. A github account connected to your university or instituition (see 2)
+
 2. Would need the student developer pack from github, should take about three seconds and a university email to apply
    for one.
+
 3. Namecheap domain (free with student developer pack and a .me extension) Look up instructions on github student pack
    and google.
+
 4. Some vps (digital ocean droplet recommended) just the account needed setting them up will be covered, also doing
    these things are provider agnostic, i'll  be using digital ocean but these apply to all platforms, since they all
    provide similar experiences. 
+
 5. You NEED some way of getting around, some sort of unix shell. Instructions
    below.
 
 ### Windows Unix Shell
 
-In windows there are many options for getting unix shells. Putty is one, but 
-not recommended for system administration work. The two most recommended 
-options are to either use a Virtual Machine, but they can be quite tedious
-to set up, or you can use wsl. It is recommended that you use wsl.
+In windows there are many options for getting unix shells. Putty is one, but not recommended for system administration
+work. The two most recommended options are to either use a Virtual Machine, but they can be quite tedious to set up, or
+you can use wsl. It is recommended that you use wsl.
 
-WSL stands for windows subsytem for linux, and is essentially a linux kernel
-embedded in windows allowing windows users access to the linux cli.
+WSL stands for windows subsytem for linux, and is essentially a linux kernel embedded in windows allowing windows users
+access to the linux cli.
 
 In order to get it follow this guide https://docs.microsoft.com/en-us/windows/wsl/install-win10
 
-I would personally recommend downloading either Debian, Fedora or openSUSE for
-WSL.
+I would personally recommend downloading either Debian, Fedora or openSUSE for WSL.
 
-Debian has the most available packages, but you will only be a few here. 
-OpenSUSE Leap, is well regarded as one of the best linux distros with good
-default tools which would probably be my own personal choice. Then Fedora is
-very similar to CentOS which is what we will be using as the deployment
-environment, generally it is a good idea to have your development environment
-be as close to your deployment environment as possible.
+Debian has the most available packages, but you will only be a few here. OpenSUSE Leap, is well regarded as one of the
+best linux distros with good default tools which would probably be my own personal choice. Then Fedora is very similar
+to CentOS which is what we will be using as the deployment environment, generally it is a good idea to have your
+development environment be as close to your deployment environment as possible.
 
 The default packages installed with wsl should be fine.
 
@@ -65,8 +65,7 @@ Make sure ssh is installed and enabled, just the client, not the server.
 
 It is recommended to install vim or a cli text editor.
 
-It is also recommended to install rsync for sysadmin work even if it isn't 
-goint to be user here.
+It is also recommended to install rsync for sysadmin work even if it isn't goint to be user here.
 
 ### Linux
 
@@ -82,8 +81,8 @@ explain together.
 Before the way software used to be developed is you would have a phase of development, then you would extensively test
 the app, and then you would release (deploy) the app. These would happen in big increments of months or years and follow
 a strict plan or schedule, then after this process you would discard and move onto the second version, often a complete
-rewrite. They would often have a support period where they have hotfixes and patches but rarely big rewrites or new features
-often resulting in overall outdated and less quality in software.
+rewrite. They would often have a support period where they have hotfixes and patches but rarely big rewrites or new
+features often resulting in overall outdated and less quality in software.
 
 The agile methodology takes the same simple idea of having a development -> test -> deploy cycle but instead these
 happen in smaller increments, and often have not quite extensive testing, then they wait for new issues to arise whether
@@ -145,7 +144,7 @@ RHEL fork, but you can choose whatever Long Term Support distro you want (recomm
 ### Create some digital ocean accounts
 
 First create some account of a vps service, some recommendations
-  
+
 - Digital Ocean Droplet
 - Google CentOS Instance
 - Microsoft Azure
@@ -667,7 +666,51 @@ We might want to save what we have just built as a digital ocean image for reuse
 
 4. Congratulations you have finished setting up a CI Server
 
+### Last installing dependencies
+
+In order to build our project in jenkins we need to install some last dependencies in our devops server.
+
+1. Installl elixir with `sudo dnf install elixir erlang`
+
+2. Install nodejs with `sudo dnf install nodejs`
+
 ## Part 2: Configure building, testing and deployment for api with jenkins
+
+### Part 2.1: Checking out from source control and unit testing
+
+#### Setting up our first build pipeline
+
+Our first step is to setup the initial pipeline project
+
+1. First of all fork the project from the macquarie dsc github to your own personal github at
+   https://github.com/Macquarie-University-DSC/tasks_api
+
+2. Clone your project into your own computer
+   1. Click Code in the top right
+
+   2. Copy the clone address either https or ssh if you have ssh setup
+
+   3. Run the command `git clone your_repo_that_you_copied.git`
+
+3. Go to your jenkins server that you had just setup and click Create Job on the dashboard
+
+4. Enter the name for your DevOps Pipeline, I am just gonna call mine TasksAPI
+
+5. Select Pipeline, and then click OK
+
+6. Give our pipeline a description, like "DevOps Pipeline for the Tasks API"
+
+7. Select Discard old builds, put how long you want to keep your build (empty for me), and Max number of builds (20 for me).
+
+8. Select Github project and add the url to your forked github repo
+
+9. Under Build triggers, click GitHub hook trigger for GITScm polling
+
+10. Under Pipeline click Pipeline script from SCM, select the SCM as Git, and enter the clone url you used before.
+
+11. Under Script Path type `pipeline/Jenkinsfile`
+
+12. Now click Save
 
 ### Service Daemons, and more SELinux
 
